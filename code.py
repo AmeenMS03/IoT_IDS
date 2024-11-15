@@ -5,8 +5,6 @@ from datetime import datetime
 
 failed_logins = {}  #to record failed logis
 blocked_ips = set()  # record blockIps (is used to prevent duplicate entries)
-FAILED_LOGIN_THRESHOLD = 5  # Number of failed attempts before blocking
-FAILED_LOGIN_EXPIRY = 300 #timeout created to clear from the memory
 
 # Log detected threats to a file and print to the console
 def log_threat(message, attack_type):
@@ -35,8 +33,15 @@ def unblock_ip(ip):
 def clean_expired_logins():
     current_time = datetime.now()
     for ip in list(failed_logins):
-        if (current_time - failed_logins[ip]['last_attempt']).total_seconds() > FAILED_LOGIN_EXPIRY:
+        if (current_time - failed_logins[ip]['last_attempt']).total_seconds() > 300:
             del failed_logins[ip]
+
+# Reset iptables and clear old blocked IPs
+def reset_firewall():
+    print("Resetting firewall rules...")
+    os.system("sudo iptables -F")  # Flush all iptables rules
+    blocked_ips.clear()
+    print("Firewall rules cleared.")
 
 def detect_threat(packet):
     if packet.haslayer(scapy.IP) and packet.haslayer(scapy.TCP): #if belonging to TCP IP
@@ -46,7 +51,7 @@ def detect_threat(packet):
         dst_ip = packet[scapy.IP].dst
         dst_port = packet[scapy.TCP].dport
 	
-	# Ignore packets from blocked IPs
+	    # Ignore packets from blocked IPs
         if src_ip in blocked_ips:
             return
 
@@ -63,13 +68,12 @@ def detect_threat(packet):
             failed_logins[src_ip]['count'] += 1                                      #the moment it is 2 times, it will block it
             failed_logins[src_ip]['last_attempt'] = datetime.now()
 
-            # If the threshold is exceeded, block the IP automatically (code supported by Scapy documentation)
-            if failed_logins[src_ip]['count'] > FAILED_LOGIN_THRESHOLD: 
-                log_threat(src_ip + " -> " + dst_ip + ", Port: " + str(dst_port), "Brute Force - SSH - 22") #log the attack in the log file
-                block_ip(src_ip)  #and then send to block function
+            # Log every failed login attempt
+            log_threat(src_ip + " -> " + dst_ip + ", Port: " + str(dst_port), "Potential SSH Brute Force")
 
 def start_sniffing(interface): 
     global failed_logins
+    reset_firewall()  # Reset iptables rules and clear blocked IPs
     failed_logins = {}  # Reset failed logins when sniffing starts
     print("Starting packet sniffing on interface: " + interface)
     scapy.sniff(iface=interface, store=False, prn=detect_threat) #command to scappy to start sniffing on provided interface, prn is for callback if anything Other commands are taken from documentation
