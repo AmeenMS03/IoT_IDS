@@ -87,14 +87,6 @@ A Python-based Network Intrusion Detection System (NIDS) designed to detect and 
 # [2024-11-15 12:00:05] 192.168.1.101 -> 192.168.1.24, Port: 22 | Attack Type: Brute Force - SSH - 22
 ```
 
-
-
-## **Contributing**
-
-Contributions are welcome! Please fork the repository, create a new branch, and submit a pull request.
-
-
-
 ## **License**
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
