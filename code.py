@@ -96,7 +96,16 @@ def view_logs():
 
 def show_menu():
     while True:
-        print("\n" + "-" * 50)
+
+        print("--------------------------------------------------------------")
+        print("""
+         ___ ____  ____            ___ ___ _____
+        |_ _|  _ \/ ___|          |_ _/ _ \_   _|
+         | || | | \___ \   _____   | | | | || |
+         | || |_| |___) | |_____|  | | |_| || |
+        |___|____/|____/          |___\___/ |_|
+        """)
+        print("--------------------------------------------------------------")
         print("Network Intrusion Detection System Menu:")
         print("1. Start Packet Sniffing")
         print("2. Block an IP Manually")
@@ -104,7 +113,7 @@ def show_menu():
         print("4. Show Blocked IPs")
         print("5. View Logs")
         print("6. Exit")
-        print("-" * 50)
+        print("--------------------------------------------------------------")
 
         choice = input("Please select an option (1-6): ")
 
