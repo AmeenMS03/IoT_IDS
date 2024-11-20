@@ -3,9 +3,11 @@
 
 A Python-based Network Intrusion Detection System (NIDS) designed to detect and block brute force attacks on a Raspberry Pi. This lightweight and efficient tool monitors live network traffic, detects malicious activity, and logs incidents for analysis.
 
+## **Collaborators**
+1. Ameen Siddiqui
+2. [Mohammed Idris](https://github.com/mczdj) 
 
-
-## **Features**a
+## **Features**
 - **Brute Force Attack Detection**: Monitors SSH traffic for repeated failed login attempts and blocks offending IPs.
 - **Live Traffic Monitoring**: Displays live network traffic with timestamps and identifies attack types.
 - **Automatic IP Blocking**: Automatically blocks IPs that exceed a predefined failed login threshold.
