@@ -84,18 +84,18 @@ def detect_threat(packet):
             failed_logins[src_ip]['last_attempt'] = datetime.now()
             log_threat(f"{src_ip} -> {dst_ip}, Port: {dst_port}", "Potential SSH Brute Force")
 
-        # Check for ARP Poisoning
-        if packet.haslayer(scapy.ARP):
-            arp_src_ip = packet[scapy.ARP].psrc
-            arp_src_mac = packet[scapy.ARP].hwsrc
+    # Check for ARP Poisoning
+    if packet.haslayer(scapy.ARP):
+        arp_src_ip = packet[scapy.ARP].psrc
+        arp_src_mac = packet[scapy.ARP].hwsrc
 
-            # If the source IP is already in the ARP table, check for a MAC address mismatch
-            if arp_src_ip in arp_table:
-                if arp_table[arp_src_ip] != arp_src_mac:
-                    log_threat(f"ARP Poisoning detected: {arp_src_ip} is claiming to be {arp_src_mac}", "ARP Poisoning")
-            else:
-                # Add the IP and MAC to the ARP table
-                arp_table[arp_src_ip] = arp_src_mac
+        # If the source IP is already in the ARP table, check for a MAC address mismatch
+        if arp_src_ip in arp_table:
+            if arp_table[arp_src_ip] != arp_src_mac:
+                log_threat(f"ARP Poisoning detected: {arp_src_ip} is claiming to be {arp_src_mac}", "ARP Poisoning")
+        else:
+            # Add the IP and MAC to the ARP table
+            arp_table[arp_src_ip] = arp_src_mac
 
 
 # Start sniffing on a specified network interface
