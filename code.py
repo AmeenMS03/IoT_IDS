@@ -60,13 +60,10 @@ def detect_threat(packet):
         dst_port = packet[scapy.TCP].dport
         tcp_flags = packet[scapy.TCP].flags
 
-        # Ignore packets from blocked IPs
+        # Ignore packets from blocked IPs 
         if src_ip in blocked_ips:
             return
-
-        # Printing live traffic
-        print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {src_ip} -> {dst_ip}, Port: {dst_port}, Flags: {tcp_flags}")
-
+        
         # Check for Nmap-specific scan types (there are three types of NMAP Scans: SYN, XMAS, Null)
         if tcp_flags == "S":  # SYN scan
             log_threat(f"SYN scan detected from {src_ip} to port {dst_port}", "Nmap SYN Scan")
@@ -76,7 +73,7 @@ def detect_threat(packet):
             #block_ip(src_ip)
         elif tcp_flags == "":  # Null scan (no flags set)
             log_threat(f"Null scan detected from {src_ip}", "Nmap Null Scan")
-            block_ip(src_ip)
+            # block_ip(src_ip)
 
         # Check if destination port was 22 (SSH) for brute-force attempts
         if dst_port == 22:
@@ -87,18 +84,18 @@ def detect_threat(packet):
             failed_logins[src_ip]['last_attempt'] = datetime.now()
             log_threat(f"{src_ip} -> {dst_ip}, Port: {dst_port}", "Potential SSH Brute Force")
 
-    # Check for ARP Poisoning
-    if packet.haslayer(scapy.ARP):
-        arp_src_ip = packet[scapy.ARP].psrc
-        arp_src_mac = packet[scapy.ARP].hwsrc
+        # Check for ARP Poisoning
+        if packet.haslayer(scapy.ARP):
+            arp_src_ip = packet[scapy.ARP].psrc
+            arp_src_mac = packet[scapy.ARP].hwsrc
 
-        # If the source IP is already in the ARP table, check for a MAC address mismatch
-        if arp_src_ip in arp_table:
-            if arp_table[arp_src_ip] != arp_src_mac:
-                log_threat(f"ARP Poisoning detected: {arp_src_ip} is claiming to be {arp_src_mac}", "ARP Poisoning")
-        else:
-            # Add the IP and MAC to the ARP table
-            arp_table[arp_src_ip] = arp_src_mac
+            # If the source IP is already in the ARP table, check for a MAC address mismatch
+            if arp_src_ip in arp_table:
+                if arp_table[arp_src_ip] != arp_src_mac:
+                    log_threat(f"ARP Poisoning detected: {arp_src_ip} is claiming to be {arp_src_mac}", "ARP Poisoning")
+            else:
+                # Add the IP and MAC to the ARP table
+                arp_table[arp_src_ip] = arp_src_mac
 
 
 # Start sniffing on a specified network interface
