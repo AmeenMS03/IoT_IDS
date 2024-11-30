@@ -3,6 +3,12 @@
 
 A Python-based Network Intrusion Detection System (NIDS) designed to detect and block malicious activities on a Raspberry Pi. This lightweight and efficient tool monitors live network traffic, detects malicious activity, and logs incidents for analysis.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1a827374-d89f-4b3d-8f6a-2034264f732e" width="500">
+</p>
+
+
+
 ## **Collaborators**
 1. Ameen Siddiqui
 2. [Mohammed Idris](https://github.com/mczdj) 
